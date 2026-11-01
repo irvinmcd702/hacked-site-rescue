@@ -30,6 +30,8 @@ step "1. Fresh lab"
 rm -rf report/out report/after report/day-later lab/backups/*
 # The WP-CLI container runs as www-data and writes backups here.
 mkdir -p lab/backups && chmod 777 lab/backups
+# Mounted into the WP-CLI container; created here so Docker does not create it as root.
+mkdir -p report/out
 ./lab/seed.sh | tail -1
 
 step "2. Infect"
