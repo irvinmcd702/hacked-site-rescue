@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brightline Dental — security incident report</title>
+<style>
+:root {
+  --bg: #f6f5f2; --paper: #ffffff; --ink: #1d1f22; --muted: #5f6368; --line: #e4e2dd;
+  --crit: #b3261e; --crit-bg: #fbeceb; --high: #a15c00; --high-bg: #fdf1e1;
+  --med: #475569; --med-bg: #eef1f5; --ok: #1e6b3a; --ok-bg: #e7f4ec; --accent: #234a8a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141517; --paper: #1c1e21; --ink: #e8e6e3; --muted: #a2a6ab; --line: #2e3136;
+    --crit: #ff8a80; --crit-bg: #3a1f1d; --high: #ffb95c; --high-bg: #35281a;
+    --med: #b6c2d2; --med-bg: #23282f; --ok: #7fd59c; --ok-bg: #1b2e22; --accent: #9db8ec;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+header p { color: var(--muted); margin: 4px 0 0; }
+h1 { font-size: 1.7rem; line-height: 1.2; margin: 0; }
+h2 { font-size: 1.2rem; margin: 40px 0 12px; }
+section > p.lead { color: var(--muted); margin-top: -4px; }
+.status { margin-top: 24px; padding: 20px; border-radius: 12px; background: var(--ok-bg); color: var(--ok); }
+.status.bad { background: var(--crit-bg); color: var(--crit); }
+.status strong { display: block; font-size: 1.15rem; margin-bottom: 6px; }
+.nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+.num { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.num b { display: block; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.num span { color: var(--muted); font-size: .9rem; }
+table { width: 100%; border-collapse: collapse; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .85rem; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+.yes { color: var(--crit); font-weight: 600; }
+.no { color: var(--ok); }
+code { font: .85rem/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+ol.timeline { list-style: none; padding: 0; margin: 0; border-left: 2px solid var(--line); }
+ol.timeline li { position: relative; padding: 0 0 14px 18px; }
+ol.timeline li::before { content: ""; position: absolute; left: -6px; top: 7px; width: 10px; height: 10px; border-radius: 50%; background: var(--crit); }
+ol.timeline time { display: block; color: var(--muted); font-size: .85rem; }
+.find { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+.find summary { cursor: pointer; display: flex; gap: 10px; align-items: baseline; list-style: none; }
+.find summary::-webkit-details-marker { display: none; }
+.chip { flex: none; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px; }
+.chip.critical { background: var(--crit-bg); color: var(--crit); }
+.chip.high { background: var(--high-bg); color: var(--high); }
+.chip.medium, .chip.info { background: var(--med-bg); color: var(--med); }
+.find .detail { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); font-size: .92rem; }
+.find .detail p { margin: 0 0 6px; }
+.find .detail ul { margin: 4px 0 10px; padding-left: 18px; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin-bottom: 10px; }
+ol.steps span { display: block; color: var(--muted); font-size: .92rem; }
+.todo { background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 14px 16px; }
+.todo ul { margin: 6px 0 0; padding-left: 18px; }
+footer { margin-top: 48px; color: var(--muted); font-size: .85rem; }
+@media (max-width: 600px) { .nums { grid-template-columns: 1fr; } h1 { font-size: 1.4rem; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Brightline Dental: what happened to your website and what we did</h1>
+  <p>Security incident report · 1 November 2026</p>
+</header>
+
+<div class="status">
+  
+  <strong>Your site is clean, and it stayed clean.</strong>
+  Everything the attacker left behind has been removed, the way they got in is closed, and a check after every scheduled task had run found nothing coming back.
+  
+  <div class="nums">
+    <div class="num"><b>25</b><span>problems found (15 critical)</span></div>
+    <div class="num"><b>0</b><span>right after cleanup</span></div>
+    <div class="num"><b>0</b><span>after every scheduled task ran</span></div>
+  </div>
+</div>
+
+
+<section>
+  <h2>Why you never saw it</h2>
+  <p class="lead">We opened your home page the way different people see it. The spam was there only for some of them, and never for you while logged in.</p>
+  <table>
+    <tr><th>Who is looking</th><th>Spam links on the page</th></tr>
+    
+    <tr><td>You, logged in</td><td><span class="no">None</span></td></tr>
+    
+    <tr><td>A visitor from the US</td><td><span class="no">None</span></td></tr>
+    
+    <tr><td>A visitor from Turkey</td><td><span class="yes">Yes</span><br><code>bahis-giris.example/</code><br><code>royal-spin-casino.example/</code><br><code>slot-bonus-tr.example/</code><br></td></tr>
+    
+    <tr><td>A visitor from Germany</td><td><span class="no">None</span></td></tr>
+    
+    <tr><td>Google&#39;s crawler</td><td><span class="yes">Yes</span><br><code>bahis-giris.example/</code><br><code>royal-spin-casino.example/</code><br><code>slot-bonus-tr.example/</code><br></td></tr>
+    
+  </table>
+</section>
+
+
+
+<section>
+  <h2>How they got in</h2>
+  <p class="lead">Reconstructed from your web server's access log.</p>
+  <ol class="timeline">
+    <li><time>28 Oct, 02:58 UTC</time>Checked which plugin versions the site runs</li><li><time>28 Oct, 02:58 UTC</time>Listed the site&#39;s user names</li><li><time>28 Oct, 03:01 UTC</time>Started guessing the admin password</li><li><time>28 Oct, 03:13 UTC</time>Sent a file through a plugin endpoint that needs no login</li><li><time>28 Oct, 03:13 UTC</time>Checked that the hidden program works</li><li><time>28 Oct, 03:14 UTC</time>Sent commands to the hidden program</li><li><time>28 Oct, 03:14 UTC</time>Logged in to the dashboard</li><li><time>28 Oct, 03:15 UTC</time>Edited theme files from the dashboard</li>
+  </ol>
+</section>
+
+
+<section>
+  <h2>What we found</h2>
+  <p class="lead">Each line is one kind of problem. Open it for the technical evidence.</p>
+  
+  <details class="find">
+    <summary><span class="chip critical">critical</span><span>Spam links shown only to some visitors and to Google, never to you (4)</span></summary>
+    <div class="detail">
+      
+      <p><strong>Links shown to visitor (TR) but not to the logged-in owner</strong> — <code>page /</code></p>
+      <p>The same page serves different links depending on who asks. This is why the owner sees a clean site while search results and some visitors see spam.</p>
+      <ul><li><code>bahis-giris.example/</code></li><li><code>royal-spin-casino.example/</code></li><li><code>slot-bonus-tr.example/</code></li></ul>
+      
+      <p><strong>Links shown to Googlebot but not to the logged-in owner</strong> — <code>page /</code></p>
+      <p>The same page serves different links depending on who asks. This is why the owner sees a clean site while search results and some visitors see spam.</p>
+      <ul><li><code>bahis-giris.example/</code></li><li><code>royal-spin-casino.example/</code></li><li><code>slot-bonus-tr.example/</code></li></ul>
+      
+      <p><strong>Links shown to visitor (TR) but not to the logged-in owner</strong> — <code>page /whitening-myths/</code></p>
+      <p>The same page serves different links depending on who asks. This is why the owner sees a clean site while search results and some visitors see spam.</p>
+      <ul><li><code>bahis-giris.example/</code></li><li><code>slot-bonus-tr.example/</code></li></ul>
+      
+      <p><strong>Links shown to Googlebot but not to the logged-in owner</strong> — <code>page /whitening-myths/</code></p>
+      <p>The same page serves different links depending on who asks. This is why the owner sees a clean site while search results and some visitors see spam.</p>
+      <ul><li><code>bahis-giris.example/</code></li><li><code>slot-bonus-tr.example/</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip critical">critical</span><span>Hidden code deciding who gets to see the spam</span></summary>
+    <div class="detail">
+      
+      <p><strong>Content depends on visitor country and search-engine bots</strong> — <code>wp-content/mu-plugins/wp-cache-helper.php</code></p>
+      <p>Checking the visitor&#39;s country and whether the visitor is Googlebot in the same code path is how spam is shown to search engines and foreign visitors while the owner sees a clean site.</p>
+      <ul><li><code>line 11: if (is_user_logged_in()) {</code></li><li><code>line 14: $cc = isset($_SERVER[&#39;HTTP_CF_IPCOUNTRY&#39;]) ? $_SERVER[&#39;HTTP_CF_IPCOUNTRY&#39;] : &#39;&#39;;</code></li><li><code>line 15: $ua = isset($_SERVER[&#39;HTTP_USER_AGENT&#39;]) ? $_SERVER[&#39;HTTP_USER_AGENT&#39;] : &#39;&#39;;</code></li><li><code>line 16: if ($cc !== &#39;TR&#39; &amp;&amp; stripos($ua, &#39;googlebot&#39;) === false) {</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip critical">critical</span><span>Code hiding an account from your list of users</span></summary>
+    <div class="detail">
+      
+      <p><strong>A user is removed from the admin users list</strong> — <code>wp-content/themes/twentytwentyfive/functions.php</code></p>
+      <p>Filtering the users query by login name hides an account from the site owner while it keeps working.</p>
+      <ul><li><code>line 164: add_action(&#39;pre_user_query&#39;, function ($q) {</code></li><li><code>line 167: $q-&gt;query_where .= &#34; AND {$wpdb-&gt;users}.user_login != &#39;wpsupport&#39;&#34;;</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip critical">critical</span><span>Code that reinstalls the infection after someone deletes it</span></summary>
+    <div class="detail">
+      
+      <p><strong>Code rewrites a file from data stored in the database</strong> — <code>wp-content/themes/twentytwentyfive/functions.php</code></p>
+      <p>Writing a decoded database value back to disk is how an infection comes back after the visible file was deleted.</p>
+      <ul><li><code>line 172: if (!file_exists($p) &amp;&amp; ($src = get_option(&#39;wpch_core&#39;))) {</code></li><li><code>line 174: @file_put_contents($p, base64_decode($src));</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip critical">critical</span><span>A WordPress system file was edited</span></summary>
+    <div class="detail">
+      
+      <p><strong>WordPress core file differs from the official release</strong> — <code>wp-includes/general-template.php</code></p>
+      <p>Core files are identical on every site running the same version. A changed one means someone edited WordPress itself, usually to load their code on every request.</p>
+      <ul><li><code>md5 336dbaadce00ce42a22ee9ce2bed3ff6, expected 623ac1d1b9b4ba7cf23d1b6aca2d2ee4</code></li><li><code>line 5651: if (defined(&#39;ABSPATH&#39;)) { @include_once ABSPATH . &#39;wp-content/uploads/2025/03/thumb-cache.php&#39;; }</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip critical">critical</span><span>An administrator account you could not see</span></summary>
+    <div class="detail">
+      
+      <p><strong>Administrator account hidden from the dashboard</strong> — <code>user wpsupport</code></p>
+      <p>The account has full control of the site but does not appear in the owner&#39;s list of users, so nobody would think to remove it.</p>
+      <ul><li><code>login wpsupport, email wpsupport@mail-relay.example, registered 2026-10-28 03:14:07</code></li><li><code>the Users screen says 2 administrators but lists 1</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip critical">critical</span><span>A spare copy of the infection kept in the database (2)</span></summary>
+    <div class="detail">
+      
+      <p><strong>Encoded code or spam stored in a setting</strong> — <code>option: wpch_blocks</code></p>
+      <p>The value is base64 that decodes to code or links. Nothing legitimate needs to hide this way.</p>
+      <ul><li><code>decodes to: &lt;div class=&#34;wpch&#34; style=&#34;position:absolute;left:-9999px&#34;&gt;&lt;a href=&#34;https://royal-spin-casino.example/&#34;&gt;casino siteleri&lt;/a&gt; &lt;a href=&#34;https://slot-bonus-tr.example…</code></li></ul>
+      
+      <p><strong>Encoded code or spam stored in a setting</strong> — <code>option: wpch_core</code></p>
+      <p>The value is base64 that decodes to code or links. Nothing legitimate needs to hide this way.</p>
+      <ul><li><code>decodes to: &lt;?php /* Plugin Name: WP Cache Helper Description: Object cache compatibility layer. Version: 2.4.1 */ // LAB SAMPLE (inert): mimics a real cloaked spam injecto…</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip critical">critical</span><span>A program hidden among your images and documents</span></summary>
+    <div class="detail">
+      
+      <p><strong>PHP file in the uploads folder</strong> — <code>wp-content/uploads/2025/03/thumb-cache.php</code></p>
+      <p>Uploads should only hold media and documents. A PHP file there runs as code when requested, which is the classic place to leave a backdoor.</p>
+      <ul><li><code>modified 2025-03-14 10:22:00 UTC</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip high">high</span><span>Code deliberately written so nobody can read what it does (2)</span></summary>
+    <div class="detail">
+      
+      <p><strong>Decoder function name hidden from search</strong> — <code>wp-content/mu-plugins/wp-cache-helper.php</code></p>
+      <p>The code builds the name of a decoding function by reversing a string, which only makes sense if someone wanted to avoid simple searches.</p>
+      <ul><li><code>line 21: $f = strrev(&#39;edoced_46esab&#39;);</code></li></ul>
+      
+      <p><strong>Decoder function name hidden from search</strong> — <code>wp-content/uploads/2025/03/thumb-cache.php</code></p>
+      <p>The code builds the name of a decoding function by reversing a string, which only makes sense if someone wanted to avoid simple searches.</p>
+      <ul><li><code>line 5: $_f = strrev(&#39;edoced_46esab&#39;);</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip high">high</span><span>A secret back door that opens with a password in the web address</span></summary>
+    <div class="detail">
+      
+      <p><strong>Hidden behaviour unlocked by a secret request parameter</strong> — <code>wp-content/uploads/2025/03/thumb-cache.php</code></p>
+      <p>Comparing a request parameter with an encoded constant and then doing something different is the usual shape of a backdoor key.</p>
+      <ul><li><code>line 6: if (isset($_REQUEST[&#39;k&#39;]) &amp;&amp; $_REQUEST[&#39;k&#39;] === $_f($_k)) {</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip high">high</span><span>Invisible links added to your blog posts (2)</span></summary>
+    <div class="detail">
+      
+      <p><strong>Invisible links inside content</strong> — <code>post #10 (night-guards)</code></p>
+      <p>Links wrapped in a hidden block are not for readers; they are planted to pass search ranking to someone else&#39;s site.</p>
+      <ul><li><code>https://royal-spin-casino.example/</code></li></ul>
+      
+      <p><strong>Invisible links inside content</strong> — <code>post #8 (whitening-myths)</code></p>
+      <p>Links wrapped in a hidden block are not for readers; they are planted to pass search ranking to someone else&#39;s site.</p>
+      <ul><li><code>https://royal-spin-casino.example/</code></li></ul>
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip medium">medium</span><span>A scheduled task that brings the infection back</span></summary>
+    <div class="detail">
+      
+      <p><strong>Scheduled task that WordPress core does not create</strong> — <code>cron: wp_update_plugins_check</code></p>
+      <p>Infections often schedule themselves to come back after cleanup. Every non-core task should be traced to the plugin or theme that registers it.</p>
+      
+      
+    </div>
+  </details>
+  
+  <details class="find">
+    <summary><span class="chip medium">medium</span><span>A hidden plugin that does not show in your plugin list</span></summary>
+    <div class="detail">
+      
+      <p><strong>Must-use plugin present</strong> — <code>wp-content/mu-plugins/wp-cache-helper.php</code></p>
+      <p>Must-use plugins load on every request and do not appear in the normal plugins list, so the owner rarely knows they exist. Each one needs an owner who can say what it is.</p>
+      <ul><li><code>modified 2026-11-01 19:08:38 UTC</code></li></ul>
+      
+    </div>
+  </details>
+  
+</section>
+
+<section>
+  <h2>What we did</h2>
+  <p class="lead">In this order, after a full backup of files and database.</p>
+  <ol class="steps">
+    <li>Back up files and database before touching anything<span>If a step removes something the site needed, it can be put back. The backup also preserves the evidence.</span></li><li>Delete files that the attacker added<span>Backdoors, injectors and stray scripts are not part of any release. Deleting them is safe; a clean site does not reference them.</span></li><li>Replace WordPress core with a clean copy of the same version<span>Core was edited to load the attacker&#39;s code. Downloading the same release over it restores every core file without touching content, themes or plugins.</span></li><li>Reinstall theme twentytwentyfive from wordpress.org<span>Its files were modified. A fresh copy of the same item replaces them all, including changes the scan did not flag.</span></li><li>Delete settings that hold the attacker&#39;s payloads<span>These are the spare copies used to rebuild the infection.</span></li><li>Unschedule task wp_update_plugins_check<span>It is registered by the malicious code and is what brings the infection back after cleanup.</span></li><li>Delete hidden administrator wpsupport<span>An account the owner never created and could not see. Anything it published is handed to the owner rather than deleted.</span></li><li>Remove invisible links from content<span>Only the hidden blocks are removed; the visible text of each post stays as it was.</span></li><li>Remove plugin simple-gallery-lite, the way in<span>The attacker&#39;s first change came through its &#34;sgl_upload_image&#34; endpoint, which accepts requests without a login. Until a fixed version exists it stays off the site.</span></li><li>End every session and lock the doors that were used<span>New salts sign everyone out, including the attacker. File editing from the dashboard is switched off, and PHP can no longer run from uploads.</span></li>
+  </ol>
+</section>
+
+
+<section>
+  <h2>What is left for you</h2>
+  <div class="todo">
+    <ul>
+      <li><strong>Owner sets a new password; change hosting, database and email passwords.</strong> The attacker had administrator access and could have read anything stored in WordPress.</li>
+      <li><strong>Keep plugins updated.</strong> This attack came in through one plugin that had not been updated; most do.</li>
+    </ul>
+  </div>
+</section>
+
+
+<footer>Prepared with an automated scan of files, database, live pages and the access log, followed by a manual review of every step.</footer>
+</main>
+</body>
+</html>

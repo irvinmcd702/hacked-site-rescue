@@ -1,0 +1,12 @@
+*.log.local
+.env
+lab/.env
+lab/backups/
+lab/logs/
+lab/site-copy/
+report/after/
+report/clean/
+report/day-later/
+report/out/
+report/owner-report.html
+scanner/bin/

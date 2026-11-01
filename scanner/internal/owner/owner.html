@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.SiteName}} — security incident report</title>
+<style>
+:root {
+  --bg: #f6f5f2; --paper: #ffffff; --ink: #1d1f22; --muted: #5f6368; --line: #e4e2dd;
+  --crit: #b3261e; --crit-bg: #fbeceb; --high: #a15c00; --high-bg: #fdf1e1;
+  --med: #475569; --med-bg: #eef1f5; --ok: #1e6b3a; --ok-bg: #e7f4ec; --accent: #234a8a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141517; --paper: #1c1e21; --ink: #e8e6e3; --muted: #a2a6ab; --line: #2e3136;
+    --crit: #ff8a80; --crit-bg: #3a1f1d; --high: #ffb95c; --high-bg: #35281a;
+    --med: #b6c2d2; --med-bg: #23282f; --ok: #7fd59c; --ok-bg: #1b2e22; --accent: #9db8ec;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+header p { color: var(--muted); margin: 4px 0 0; }
+h1 { font-size: 1.7rem; line-height: 1.2; margin: 0; }
+h2 { font-size: 1.2rem; margin: 40px 0 12px; }
+section > p.lead { color: var(--muted); margin-top: -4px; }
+.status { margin-top: 24px; padding: 20px; border-radius: 12px; background: var(--ok-bg); color: var(--ok); }
+.status.bad { background: var(--crit-bg); color: var(--crit); }
+.status strong { display: block; font-size: 1.15rem; margin-bottom: 6px; }
+.nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+.num { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.num b { display: block; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.num span { color: var(--muted); font-size: .9rem; }
+table { width: 100%; border-collapse: collapse; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .85rem; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+.yes { color: var(--crit); font-weight: 600; }
+.no { color: var(--ok); }
+code { font: .85rem/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+ol.timeline { list-style: none; padding: 0; margin: 0; border-left: 2px solid var(--line); }
+ol.timeline li { position: relative; padding: 0 0 14px 18px; }
+ol.timeline li::before { content: ""; position: absolute; left: -6px; top: 7px; width: 10px; height: 10px; border-radius: 50%; background: var(--crit); }
+ol.timeline time { display: block; color: var(--muted); font-size: .85rem; }
+.find { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+.find summary { cursor: pointer; display: flex; gap: 10px; align-items: baseline; list-style: none; }
+.find summary::-webkit-details-marker { display: none; }
+.chip { flex: none; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px; }
+.chip.critical { background: var(--crit-bg); color: var(--crit); }
+.chip.high { background: var(--high-bg); color: var(--high); }
+.chip.medium, .chip.info { background: var(--med-bg); color: var(--med); }
+.find .detail { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); font-size: .92rem; }
+.find .detail p { margin: 0 0 6px; }
+.find .detail ul { margin: 4px 0 10px; padding-left: 18px; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin-bottom: 10px; }
+ol.steps span { display: block; color: var(--muted); font-size: .92rem; }
+.todo { background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 14px 16px; }
+.todo ul { margin: 6px 0 0; padding-left: 18px; }
+footer { margin-top: 48px; color: var(--muted); font-size: .85rem; }
+@media (max-width: 600px) { .nums { grid-template-columns: 1fr; } h1 { font-size: 1.4rem; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>{{.SiteName}}: what happened to your website and what we did</h1>
+  <p>Security incident report · {{.Generated}}</p>
+</header>
+
+<div class="status{{if not .Clean}} bad{{end}}">
+  {{if .Clean}}
+  <strong>Your site is clean, and it stayed clean.</strong>
+  Everything the attacker left behind has been removed, the way they got in is closed, and a check after every scheduled task had run found nothing coming back.
+  {{else}}
+  <strong>The cleanup is not finished.</strong>
+  The checks after cleanup still found problems; see the numbers below.
+  {{end}}
+  <div class="nums">
+    <div class="num"><b>{{.BeforeAll}}</b><span>problems found ({{.BeforeCrit}} critical)</span></div>
+    <div class="num"><b>{{.AfterAll}}</b><span>right after cleanup</span></div>
+    <div class="num"><b>{{.LaterAll}}</b><span>after every scheduled task ran</span></div>
+  </div>
+</div>
+
+{{if .Views}}
+<section>
+  <h2>Why you never saw it</h2>
+  <p class="lead">We opened {{.ViewsPage}} the way different people see it. The spam was there only for some of them, and never for you while logged in.</p>
+  <table>
+    <tr><th>Who is looking</th><th>Spam links on the page</th></tr>
+    {{range .Views}}
+    <tr><td>{{.Viewer}}</td><td>{{if .Spam}}<span class="yes">Yes</span><br>{{range .Spam}}<code>{{.}}</code><br>{{end}}{{else}}<span class="no">None</span>{{end}}</td></tr>
+    {{end}}
+  </table>
+</section>
+{{end}}
+
+{{if .Timeline}}
+<section>
+  <h2>How they got in</h2>
+  <p class="lead">Reconstructed from your web server's access log.</p>
+  <ol class="timeline">
+    {{range .Timeline}}<li><time>{{.When}}</time>{{.What}}</li>{{end}}
+  </ol>
+</section>
+{{end}}
+
+<section>
+  <h2>What we found</h2>
+  <p class="lead">Each line is one kind of problem. Open it for the technical evidence.</p>
+  {{range .Groups}}
+  <details class="find">
+    <summary><span class="chip {{.Severity}}">{{.Severity}}</span><span>{{.Plain}}{{if gt (len .Findings) 1}} ({{len .Findings}}){{end}}</span></summary>
+    <div class="detail">
+      {{range .Findings}}
+      <p><strong>{{.Title}}</strong> — <code>{{.Where}}</code></p>
+      <p>{{.Why}}</p>
+      {{if .Evidence}}<ul>{{range .Evidence}}<li><code>{{.}}</code></li>{{end}}</ul>{{end}}
+      {{end}}
+    </div>
+  </details>
+  {{end}}
+</section>
+
+<section>
+  <h2>What we did</h2>
+  <p class="lead">In this order, after a full backup of files and database.</p>
+  <ol class="steps">
+    {{range .Auto}}<li>{{.Title}}<span>{{.Why}}</span></li>{{end}}
+  </ol>
+</section>
+
+{{if .Manual}}
+<section>
+  <h2>What is left for you</h2>
+  <div class="todo">
+    <ul>
+      {{range .Manual}}<li><strong>{{.Title}}.</strong> {{.Why}}</li>{{end}}
+      <li><strong>Keep plugins updated.</strong> This attack came in through one plugin that had not been updated; most do.</li>
+    </ul>
+  </div>
+</section>
+{{end}}
+
+<footer>Prepared with an automated scan of files, database, live pages and the access log, followed by a manual review of every step.</footer>
+</main>
+</body>
+</html>
